@@ -11,6 +11,10 @@ defineProps({
   height: {
     type: Number,
     default: 24
+  },
+  color: {
+    type: String,
+    default: 'currentColor'
   }
 })
 
@@ -26,5 +30,6 @@ const getIconName = (type, name) => {
     :icon="getIconName(type, name)"
     :width="width"
     :height="height"
+    :color="color"
   />
 </template>

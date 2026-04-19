@@ -2,8 +2,13 @@
   <nav class="bg-white shadow-md p-3">
     <div class="container mx-auto flex justify-between items-center">
 
-      <h1 class="text-xl font-bold">
-        Tour Guide
+      <h1 class="text-xl font-bold ">
+       <router-link 
+            to="/"
+            class="text-black hover:text-teal-500"
+          >
+            Wanderspot
+          </router-link>
       </h1>
 
       <div class="flex items-center gap-4">
@@ -12,7 +17,7 @@
         <template v-if="!user">
           <router-link 
             to="/login"
-            class="text-gray-600 hover:text-black"
+            class="text-black hover:text-teal-500"
           >
             Iniciar sesión
           </router-link>

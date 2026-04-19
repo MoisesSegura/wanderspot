@@ -1,17 +1,66 @@
 <template>
-  <div class="flex justify-center mt-20">
-    <form @submit.prevent="register" class="bg-white p-6 rounded shadow w-80">
-      
-      <h2 class="text-xl mb-4">Registrarse</h2>
+  <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div class="grid grid-cols-2 w-full max-w-3xl rounded-xl overflow-hidden shadow-sm">
 
-      <input v-model="email" placeholder="Email" class="input mb-2" />
-      <input v-model="password" type="password" placeholder="Password" class="input mb-4" />
+      <div class="bg-teal-700 flex flex-col items-center justify-center p-12 gap-8">
+        <div class="text-center">
+          <h1 class="text-4xl text-teal-50" style="font-family: 'Sofadi One', cursive;">Wanderspot</h1>
+          <p class="text-teal-300 text-sm mt-2 tracking-wide">descubre lugares increíbles</p>
+        </div>
+        <div class="flex flex-col gap-4 w-full max-w-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-teal-800 flex items-center justify-center shrink-0">
+             <Icon type="lucide" name="map-pin" width="20" height="20" color="oklch(98.7% 0.002 197.1)"/>
+            </div>
+            <p class="text-teal-300 text-sm">Explora restaurantes, parques y más</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-teal-800 flex items-center justify-center shrink-0">
+               <Icon type="lucide" name="star" width="20" height="20" color="oklch(98.7% 0.002 197.1)"/>
+            </div>
+            <p class="text-teal-300 text-sm">Lee y escribe reseñas</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-teal-800 flex items-center justify-center shrink-0">
+              <Icon type="lucide" name="camera" width="20" height="20" color="oklch(98.7% 0.002 197.1)"/>
+            </div>
+            <p class="text-teal-300 text-sm">Publica tus lugares favoritos</p>
+          </div>
+        </div>
+      </div>
 
-      <button class="bg-teal-600 text-white w-full py-2 rounded">
-        Crear cuenta
-      </button>
+      <div class="bg-white flex flex-col justify-center p-10">
+        <h2 class="text-xl font-medium text-gray-800 mb-1">Crear cuenta</h2>
+        <p class="text-sm text-gray-400 mb-6">Únete y empieza a explorar</p>
 
-    </form>
+        <form @submit.prevent="register" class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <label class="text-xs text-gray-500">Nombre</label>
+            <input v-model="name" type="text" placeholder="Tu nombre" class="input" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs text-gray-500">Email</label>
+            <input v-model="email" type="email" placeholder="tu@email.com" class="input" required />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-xs text-gray-500">Contraseña</label>
+            <input v-model="password" type="password" placeholder="••••••••" class="input" required />
+          </div>
+
+          <p v-if="errorMsg" class="text-red-500 text-xs">{{ errorMsg }}</p>
+
+          <button class="bg-teal-700 text-white w-full py-2.5 rounded-lg hover:bg-teal-800 transition-colors text-sm font-medium">
+            Crear cuenta
+          </button>
+        </form>
+
+        <p class="text-sm text-gray-400 text-center mt-6">
+          ¿Ya tienes cuenta?
+          <router-link to="/login" class="text-teal-700 font-medium hover:underline">Inicia sesión</router-link>
+        </p>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -19,25 +68,27 @@
 import { ref } from 'vue'
 import { supabase } from '../supabase'
 import { useRouter } from 'vue-router'
+import Icon from '../components/Icon.vue'
 
+const name = ref('')
 const email = ref('')
 const password = ref('')
-const router = useRouter()
 const errorMsg = ref('')
+const router = useRouter()
 
 const register = async () => {
   errorMsg.value = ''
-
   const { error } = await supabase.auth.signUp({
     email: email.value,
-    password: password.value
+    password: password.value,
+    options: {
+      data: { full_name: name.value }
+    }
   })
-
   if (error) {
     errorMsg.value = error.message
     return
   }
-
   router.push('/')
 }
 </script>
