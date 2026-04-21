@@ -32,13 +32,21 @@
 
         <!-- loggeado -->
         <template v-else>
+
+          <router-link 
+          to="/my-places"
+          class="text-gray-600 hover:text-teal-600"
+        >
+          Mis lugares
+        </router-link>
+
           <span class="text-gray-600">
-            {{ user.email }}
+            {{ user.display_name || user.email }}
           </span>
 
           <button 
             @click="logout"
-            class="bg-pink-500 text-white px-3 py-1 rounded"
+            class="bg-teal-500 text-white px-3 py-1 rounded"
           >
             Salir
           </button>

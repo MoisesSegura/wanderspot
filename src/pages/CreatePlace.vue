@@ -24,7 +24,6 @@
 
         <div class="mb-4">
           <label class="block font-semibold mb-2">Ubicación</label>
-        <Icon icon="simple-icons:googlemaps" width="20" height="20" />
           <input v-model="form.location" class="input" />
         </div>
 
@@ -68,9 +67,6 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import TagSelector from '../components/TagSelector.vue'
 
-const { data: userData } = await supabase.auth.getUser()
-const userId = userData.user.id
-
 const router = useRouter()
 
 const form = ref({
@@ -89,6 +85,10 @@ const handleTags = (tags) => {
 }
 
 onMounted(async () => {
+
+  const { data: userData } = await supabase.auth.getUser()
+const userId = userData.user.id
+
   await nextTick()
 
 

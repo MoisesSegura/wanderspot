@@ -29,6 +29,12 @@ const routes = [
   path: '/create',
   name: 'create-place',
   component: () => import('../pages/CreatePlace.vue')
+},
+{
+  path: '/my-places',
+  name: 'my-places',
+  component: () => import('../pages/MyPlaces.vue'),
+  meta: { requiresAuth: true }
 }
 ]
 
