@@ -35,6 +35,13 @@ const routes = [
   name: 'my-places',
   component: () => import('../pages/MyPlaces.vue'),
   meta: { requiresAuth: true }
+},
+
+{
+  path: '/edit/:id',
+  name: 'edit-place',
+  component: () => import('../pages/EditPlace.vue'),
+  meta: { requiresAuth: true }
 }
 ]
 

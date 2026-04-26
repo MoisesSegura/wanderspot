@@ -9,6 +9,11 @@
       <form @submit.prevent="handleSubmit">
 
         <div class="mb-4">
+          <label class="block font-semibold mb-2">Imagen</label>
+          <input type="file" @change="handleFile" />
+        </div>
+
+        <div class="mb-4">
           <label class="block font-semibold mb-2">Nombre</label>
           <input v-model="form.name" class="input" required />
         </div>
@@ -18,6 +23,10 @@
           <textarea v-model="form.description" class="input"></textarea>
         </div>
 
+         <div class="mb-4">
+        <CategorySelector @update:selected="form.value.category_id = $event" />
+        </div>
+        
         <div class="mb-4">
          <TagSelector @update:selected="handleTags" />
         </div>
@@ -66,12 +75,20 @@ import { useRouter } from 'vue-router'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import TagSelector from '../components/TagSelector.vue'
+import CategorySelector from '../components/CategorySelector.vue'
 
+const userId = ref(null)
+const file = ref(null)
 const router = useRouter()
+
+const handleFile = (e) => {
+  file.value = e.target.files[0]
+}
 
 const form = ref({
   name: '',
   description: '',
+  category_id: null,
   location: '',
   lat: '',
   lng: '',
@@ -86,9 +103,8 @@ const handleTags = (tags) => {
 
 onMounted(async () => {
 
-  const { data: userData } = await supabase.auth.getUser()
-const userId = userData.user.id
-
+const { data: userData } = await supabase.auth.getUser()
+userId.value = userData.user.id
   await nextTick()
 
 
@@ -130,13 +146,37 @@ const handleSubmit = async () => {
     return
   }
 
-  // 1. Crear lugar
+  // 🟢 SUBIR IMAGEN AQUÍ
+  let imageUrl = null
+
+  if (file.value) {
+    const fileName = `${Date.now()}-${file.value.name}`
+
+    const { error } = await supabase.storage
+      .from('places-images')
+      .upload(fileName, file.value)
+
+    if (error) {
+      console.error('Error subiendo imagen:', error)
+    } else {
+      const { data: publicUrl } = supabase
+        .storage
+        .from('places-images')
+        .getPublicUrl(fileName)
+
+      imageUrl = publicUrl.publicUrl
+    }
+  }
+
+  // 🟢 INSERT
   const { data, error } = await supabase
     .from('places')
     .insert([{
-      user_id: userId,
+      image: imageUrl,
+      user_id: userId.value,
       name: form.value.name,
       description: form.value.description,
+      category_id: form.value.category_id,
       location: form.value.location,
       lat: parseFloat(form.value.lat),
       lng: parseFloat(form.value.lng),
@@ -152,23 +192,16 @@ const handleSubmit = async () => {
 
   const placeId = data.id
 
-  // 2. Insertar tags
+  // tags...
   if (selectedTags.value.length > 0) {
     const relations = selectedTags.value.map(tagId => ({
       place_id: placeId,
       tag_id: tagId
     }))
 
-    const { error: tagError } = await supabase
-      .from('place_tags')
-      .insert(relations)
-
-    if (tagError) {
-      console.error('Error insertando tags:', tagError)
-    }
+    await supabase.from('place_tags').insert(relations)
   }
 
-  // 3. Redirigir
   router.push(`/place/${placeId}`)
 }
 </script>

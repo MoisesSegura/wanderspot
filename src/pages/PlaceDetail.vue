@@ -6,16 +6,22 @@
       <div class="container mx-auto px-4 py-12">
 
         <!-- Imagen -->
-        <div class="w-full h-100 bg-gray-300 rounded-lg overflow-hidden">
-          <img 
-            v-if="place?.image"
-            :src="place.image"
-            class="w-full h-full object-cover"
-          />
-          <div v-else class="flex items-center justify-center h-full text-gray-600">
-            Sin imagen
-          </div>
-        </div>
+<div v-if="place">
+  <img 
+    v-if="showImage"
+    :src="place.image"
+    @error="showImage = false"
+    class="w-full h-48 object-cover"
+  />
+
+  <div v-else class="w-full h-48 bg-gray-300 flex items-center justify-center rounded">
+    Sin imagen
+  </div>
+</div>
+
+<div v-else>
+  Cargando...
+</div>
 
         <!-- Header -->
         <div class="mt-6 flex justify-between items-center">
@@ -90,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, watch, onMounted, computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '../supabase'
 
@@ -99,6 +105,12 @@ import 'leaflet/dist/leaflet.css'
 
 const route = useRoute()
 const place = ref(null)
+
+const showImage = ref(true)
+
+watch(() => place.value?.image, (newVal) => {
+  showImage.value = !!newVal
+})
 
 onMounted(async () => {
 

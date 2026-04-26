@@ -37,15 +37,19 @@
 
             <router-link 
               :to="`/place/${place.id}`"
-              class="text-teal-500"
-            >
+              class="text-white bg-teal-500 px-4 py-2 rounded hover:bg-teal-600">
               Ver
+            </router-link>
+
+              <router-link 
+                :to="`/edit/${place.id}`"
+                class="text-white bg-yellow-500 px-4 py-2 rounded hover:bg-yellow-600">
+                Editar
             </router-link>
 
             <button 
               @click="deletePlace(place.id)"
-              class="text-rose-500"
-            >
+              class="text-white bg-rose-500 px-4 py-2 rounded hover:bg-rose-600">
               Eliminar
             </button>
 
